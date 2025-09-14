@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriAssist Backend - Complete Controllers & Routes Documentation</title>
+    <style>
+        @media print {
+            body { -webkit-print-color-adjust: exact; color-adjust: exact; }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 40px 20px;
+            margin: -20px -20px 40px -20px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .toc h2 {
+            color: #2E7D32;
+            margin-top: 0;
+            font-size: 1.8rem;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .toc li {
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .toc li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc a {
+            color: #2E7D32;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .toc a:hover {
+            color: #4CAF50;
+        }
+        
+        .module-tag {
+            background: #FF9800;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .controller-section {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            margin: 30px 0;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .controller-section h3 {
+            color: #2E7D32;
+            font-size: 1.8rem;
+            margin: 0 0 15px 0;
+            padding: 15px 0;
+            border-bottom: 3px solid #4CAF50;
+        }
+        
+        .controller-section .purpose {
+            background: #E8F5E8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .controller-section .purpose strong {
+            color: #2E7D32;
+        }
+        
+        .route-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .route-table th {
+            background: #2E7D32;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #1B5E20;
+        }
+        
+        .route-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        
+        .route-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .route-table tbody tr:hover {
+            background: #E8F5E8;
+        }
+        
+        .method {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .method.GET { background: #4CAF50; color: white; }
+        .method.POST { background: #2196F3; color: white; }
+        .method.PUT { background: #FF9800; color: white; }
+        .method.DELETE { background: #f44336; color: white; }
+        
+        .route-code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #d63384;
+        }
+        
+        .integration-flow {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            border: 2px solid #2196F3;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .integration-flow h2 {
+            color: #1565C0;
+            margin-top: 0;
+        }
+        
+        .flow-step {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .flow-step strong {
+            color: #1565C0;
+        }
+        
+        .benefits {
+            background: #FFF3E0;
+            border: 2px solid #FF9800;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .benefits h3 {
+            color: #E65100;
+            margin-top: 0;
+        }
+        
+        .benefits ul {
+            columns: 2;
+            column-gap: 30px;
+        }
+        
+        .benefits li {
+            break-inside: avoid;
+            margin: 8px 0;
+        }
+        
+        .download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .download-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { margin: -10px -10px 20px -10px; padding: 20px 10px; }
+            .header h1 { font-size: 1.8rem; }
+            .benefits ul { columns: 1; }
+            .download-btn { position: relative; width: 100%; margin: 20px 0; }
+        }
+    </style>
+</head>
+<body>
+    <button class="download-btn no-print" onclick="downloadPDF()">📄 Download PDF</button>
+    
+    <div class="header">
+        <h1>🌾 AgriAssist Backend Documentation</h1>
+        <p>Complete Controllers & Routes Architecture</p>
+        <p><em>AI-Powered Farming Assistant for Indian Farmers</em></p>
+    </div>
+    
+    <div class="toc">
+        <h2>📋 Table of Contents</h2>
+        <ul>
+            <li><a href="#auth">🔐 Authentication Controller</a></li>
+            <li><a href="#user">👤 User Management Controller</a></li>
+            <li><a href="#farm">🚜 Farm Management Controller</a></li>
+            <li><a href="#assistant">🌾 AI Assistant Controller</a></li>
+            <li><a href="#cropcycle">🌱 Crop Cycle Controller</a></li>
+            <li><a href="#recommendation">💡 Recommendation Controller</a></li>
+            <li><a href="#disease">🦠 Disease Detection Controller <span class="module-tag">MODULE 1</span></a></li>
+            <li><a href="#forecast">📊 Disease Forecast Controller <span class="module-tag">MODULE 1+</span></a></li>
+            <li><a href="#fertilizer">🧪 Fertilizer Controller <span class="module-tag">MODULE 2</span></a></li>
+            <li><a href="#irrigation">💧 Irrigation Controller <span class="module-tag">MODULE 2</span></a></li>
+            <li><a href="#market">📈 Market Intelligence Controller <span class="module-tag">MODULE 3</span></a></li>
+            <li><a href="#price">💰 Price Analytics Controller <span class="module-tag">MODULE 3</span></a></li>
+            <li><a href="#weather">🌦️ Weather Controller</a></li>
+            <li><a href="#voice">🎤 Voice Assistant Controller</a></li>
+            <li><a href="#notification">🔔 Notification Controller</a></li>
+            <li><a href="#analytics">📊 Analytics Controller</a></li>
+            <li><a href="#integration">🔄 Integration Flow</a></li>
+        </ul>
+    </div>
+
+    <div class="controller-section" id="auth">
+        <h3>🔐 Authentication Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Handle farmer authentication via phone OTP system
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>sendOTP</code></td>
+                    <td><span class="route-code">/api/auth/send-otp</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Send OTP to farmer's phone number</td>
+                    <td>No password system - OTP ensures phone verification for rural farmers</td>
+                </tr>
+                <tr>
+                    <td><code>verifyOTP</code></td>
+                    <td><span class="route-code">/api/auth/verify-otp</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Verify OTP and generate JWT tokens</td>
+                    <td>Complete authentication flow with access/refresh token generation</td>
+                </tr>
+                <tr>
+                    <td><code>refreshToken</code></td>
+                    <td><span class="route-code">/api/auth/refresh-token</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Refresh expired access token</td>
+                    <td>Maintain session without re-authentication</td>
+                </tr>
+                <tr>
+                    <td><code>logout</code></td>
+                    <td><span class="route-code">/api/auth/logout</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Logout farmer and invalidate tokens</td>
+                    <td>Clean session termination and security</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="user">
+        <h3>👤 User Management Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Manage farmer profile and account settings
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getProfile</code></td>
+                    <td><span class="route-code">/api/user/profile</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get current farmer profile data</td>
+                    <td>Display farmer info on dashboard</td>
+                </tr>
+                <tr>
+                    <td><code>updateProfile</code></td>
+                    <td><span class="route-code">/api/user/profile</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Update farmer name, language, location</td>
+                    <td>Allow profile customization and language preference (Telugu/Hindi/English)</td>
+                </tr>
+                <tr>
+                    <td><code>updatePreferences</code></td>
+                    <td><span class="route-code">/api/user/preferences</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Update notification & unit preferences</td>
+                    <td>Customize app experience (notifications, area units)</td>
+                </tr>
+                <tr>
+                    <td><code>getFarms</code></td>
+                    <td><span class="route-code">/api/user/farms</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get all farms owned by farmer</td>
+                    <td>List farmer's multiple land parcels</td>
+                </tr>
+                <tr>
+                    <td><code>deleteAccount</code></td>
+                    <td><span class="route-code">/api/user/account</span></td>
+                    <td><span class="method DELETE">DELETE</span></td>
+                    <td>Delete farmer account completely</td>
+                    <td>GDPR compliance and account management</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section page-break" id="farm">
+        <h3>🚜 Farm Management Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Manage farm land information, soil & water reports
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>createFarm</code></td>
+                    <td><span class="route-code">/api/farm</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Add new farm land with basic details</td>
+                    <td>Register new farming land with location coordinates</td>
+                </tr>
+                <tr>
+                    <td><code>getFarm</code></td>
+                    <td><span class="route-code">/api/farm/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get specific farm details</td>
+                    <td>Display farm info for crop planning</td>
+                </tr>
+                <tr>
+                    <td><code>updateFarm</code></td>
+                    <td><span class="route-code">/api/farm/:farmId</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Update farm name, location, area size</td>
+                    <td>Modify farm details as needed</td>
+                </tr>
+                <tr>
+                    <td><code>deleteFarm</code></td>
+                    <td><span class="route-code">/api/farm/:farmId</span></td>
+                    <td><span class="method DELETE">DELETE</span></td>
+                    <td>Remove farm from farmer's account</td>
+                    <td>Clean up unused farm records</td>
+                </tr>
+                <tr>
+                    <td><code>uploadSoilReport</code></td>
+                    <td><span class="route-code">/api/farm/:farmId/soil-report</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Upload soil test report (PDF/image)</td>
+                    <td>Essential for AI crop recommendations - NPK levels, pH</td>
+                </tr>
+                <tr>
+                    <td><code>uploadWaterReport</code></td>
+                    <td><span class="route-code">/api/farm/:farmId/water-report</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Upload water quality test report</td>
+                    <td>Water quality affects crop selection and irrigation</td>
+                </tr>
+                <tr>
+                    <td><code>getActiveCrops</code></td>
+                    <td><span class="route-code">/api/farm/:farmId/active-crops</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get currently growing crops on farm</td>
+                    <td>Quick overview of active cultivation</td>
+                </tr>
+                <tr>
+                    <td><code>getFarmHistory</code></td>
+                    <td><span class="route-code">/api/farm/:farmId/history</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get farm's previous crop history</td>
+                    <td>Historical data for better planning</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="assistant">
+        <h3>🌾 AI Assistant Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Main End-to-End AI Assistant - Core feature that manages complete crop lifecycle
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getDashboard</code></td>
+                    <td><span class="route-code">/api/assistant/dashboard</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get farmer's main dashboard overview</td>
+                    <td>Central hub showing all active crops, tasks, alerts</td>
+                </tr>
+                <tr>
+                    <td><code>getUpcomingTasks</code></td>
+                    <td><span class="route-code">/api/assistant/tasks</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get scheduled fertilizer/irrigation tasks</td>
+                    <td>Daily task management for farmers</td>
+                </tr>
+                <tr>
+                    <td><code>markTaskComplete</code></td>
+                    <td><span class="route-code">/api/assistant/tasks/:taskId/complete</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Mark fertilizer/irrigation task as done</td>
+                    <td>Track compliance with AI recommendations</td>
+                </tr>
+                <tr>
+                    <td><code>getCropHealth</code></td>
+                    <td><span class="route-code">/api/assistant/crop-health/:cropId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get crop health status and recommendations</td>
+                    <td>Monitor crop wellness throughout cycle</td>
+                </tr>
+                <tr>
+                    <td><code>requestHealthCheck</code></td>
+                    <td><span class="route-code">/api/assistant/health-check/:cropId</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>AI prompts farmer to upload leaf image</td>
+                    <td>Proactive disease monitoring - "Check your crop now"</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="cropcycle">
+        <h3>🌱 Crop Cycle Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Manage complete crop lifecycle from sowing to harvest
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>startCropCycle</code></td>
+                    <td><span class="route-code">/api/crop-cycle/start</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Begin new crop cycle with AI planning</td>
+                    <td>Initialize crop with fertilizer/irrigation schedule</td>
+                </tr>
+                <tr>
+                    <td><code>getCropCycle</code></td>
+                    <td><span class="route-code">/api/crop-cycle/:cycleId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get complete crop cycle details</td>
+                    <td>View current crop status, plans, history</td>
+                </tr>
+                <tr>
+                    <td><code>updateCropStage</code></td>
+                    <td><span class="route-code">/api/crop-cycle/:cycleId/stage</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Update crop growth stage (sowing→flowering)</td>
+                    <td>Track crop development for stage-specific care</td>
+                </tr>
+                <tr>
+                    <td><code>getCurrentPlan</code></td>
+                    <td><span class="route-code">/api/crop-cycle/:cycleId/current-plan</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get active fertilizer & irrigation schedule</td>
+                    <td>Show farmer what to do today/this week</td>
+                </tr>
+                <tr>
+                    <td><code>applyFertilizer</code></td>
+                    <td><span class="route-code">/api/crop-cycle/:cycleId/fertilizer</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Record fertilizer application</td>
+                    <td>Track actual vs planned fertilizer usage</td>
+                </tr>
+                <tr>
+                    <td><code>applyIrrigation</code></td>
+                    <td><span class="route-code">/api/crop-cycle/:cycleId/irrigation</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Record irrigation completion</td>
+                    <td>Monitor water usage and schedule adherence</td>
+                </tr>
+                <tr>
+                    <td><code>addExpense</code></td>
+                    <td><span class="route-code">/api/crop-cycle/:cycleId/expense</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Record crop-related expenses</td>
+                    <td>Track investment for profit calculation</td>
+                </tr>
+                <tr>
+                    <td><code>completeCropCycle</code></td>
+                    <td><span class="route-code">/api/crop-cycle/:cycleId/complete</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Mark crop as harvested with yield data</td>
+                    <td>Generate market recommendations, calculate profit</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section page-break" id="recommendation">
+        <h3>💡 Recommendation Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> AI crop recommendation engine based on soil, weather, market data
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getCropRecommendations</code></td>
+                    <td><span class="route-code">/api/recommendations/crops</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Get AI-suggested crops for farm & season</td>
+                    <td>Help farmers choose optimal crops based on soil/weather</td>
+                </tr>
+                <tr>
+                    <td><code>getRecommendationDetails</code></td>
+                    <td><span class="route-code">/api/recommendations/:recId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get detailed crop recommendation with analysis</td>
+                    <td>Show why AI recommended specific crops</td>
+                </tr>
+                <tr>
+                    <td><code>selectRecommendation</code></td>
+                    <td><span class="route-code">/api/recommendations/:recId/select</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Farmer chooses a recommended crop</td>
+                    <td>Convert recommendation into actual crop cycle</td>
+                </tr>
+                <tr>
+                    <td><code>provideFeedback</code></td>
+                    <td><span class="route-code">/api/recommendations/:recId/feedback</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Farmer feedback on recommendation accuracy</td>
+                    <td>Improve AI model with real-world outcomes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="disease">
+        <h3>🦠 Disease Detection Controller <span class="module-tag">MODULE 1</span></h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> AI-powered plant disease detection and management
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>analyzeLeafImage</code></td>
+                    <td><span class="route-code">/api/disease/analyze</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Upload leaf image for AI disease detection</td>
+                    <td>Core Module 1 - Instant disease identification</td>
+                </tr>
+                <tr>
+                    <td><code>getDetectionHistory</code></td>
+                    <td><span class="route-code">/api/disease/history</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get farmer's disease detection records</td>
+                    <td>Track disease patterns over time</td>
+                </tr>
+                <tr>
+                    <td><code>getDetectionResult</code></td>
+                    <td><span class="route-code">/api/disease/detection/:detectionId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get specific detection with treatment plan</td>
+                    <td>Detailed disease info and recommended actions</td>
+                </tr>
+                <tr>
+                    <td><code>updateTreatmentStatus</code></td>
+                    <td><span class="route-code">/api/disease/detection/:detectionId/treatment</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Update disease treatment progress</td>
+                    <td>Track treatment effectiveness</td>
+                </tr>
+                <tr>
+                    <td><code>bulkAnalyzeImages</code></td>
+                    <td><span class="route-code">/api/disease/bulk-analyze</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Analyze multiple leaf images at once</td>
+                    <td>Efficient disease checking for large farms</td>
+                </tr>
+                <tr>
+                    <td><code>getCommonDiseases</code></td>
+                    <td><span class="route-code">/api/disease/common/:cropType</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get common diseases for specific crop</td>
+                    <td>Educational - show typical diseases to watch for</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="forecast">
+        <h3>📊 Disease Forecast Controller <span class="module-tag">MODULE 1+</span></h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Weather & satellite-based disease outbreak prediction
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getDiseaseOutbreakForecast</code></td>
+                    <td><span class="route-code">/api/forecast/disease/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get 7-14 day disease risk forecast</td>
+                    <td>Module 1 Layer 2 - Preventive disease management</td>
+                </tr>
+                <tr>
+                    <td><code>getWeatherRiskAnalysis</code></td>
+                    <td><span class="route-code">/api/forecast/weather-risk/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Analyze weather conditions for disease risk</td>
+                    <td>Humidity/rain patterns predict fungal diseases</td>
+                </tr>
+                <tr>
+                    <td><code>getSatelliteVegetationIndex</code></td>
+                    <td><span class="route-code">/api/forecast/satellite/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get NDVI data for crop stress detection</td>
+                    <td>Early warning system for crop health issues</td>
+                </tr>
+                <tr>
+                    <td><code>getPreventiveRecommendations</code></td>
+                    <td><span class="route-code">/api/forecast/preventive/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get disease prevention suggestions</td>
+                    <td>Proactive measures before disease strikes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="fertilizer">
+        <h3>🧪 Fertilizer Controller <span class="module-tag">MODULE 2</span></h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> AI-driven fertilizer planning and management
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getFertilizerPlan</code></td>
+                    <td><span class="route-code">/api/fertilizer/plan/:cropCycleId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get AI-generated fertilizer schedule</td>
+                    <td>Module 2 - Dynamic fertilizer recommendations</td>
+                </tr>
+                <tr>
+                    <td><code>updateFertilizerPlan</code></td>
+                    <td><span class="route-code">/api/fertilizer/plan/:cropCycleId</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>AI adjusts plan based on crop health</td>
+                    <td>Adaptive planning after disease detection</td>
+                </tr>
+                <tr>
+                    <td><code>getFertilizerTypes</code></td>
+                    <td><span class="route-code">/api/fertilizer/types</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get available fertilizer options</td>
+                    <td>Show farmers fertilizer choices with descriptions</td>
+                </tr>
+                <tr>
+                    <td><code>calculateFertilizerCost</code></td>
+                    <td><span class="route-code">/api/fertilizer/cost-calculator</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Calculate fertilizer expenses for plan</td>
+                    <td>Help farmers budget for crop cycle</td>
+                </tr>
+                <tr>
+                    <td><code>getFertilizerEffectiveness</code></td>
+                    <td><span class="route-code">/api/fertilizer/effectiveness/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Track fertilizer impact on previous crops</td>
+                    <td>Learn from historical fertilizer usage</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="irrigation">
+        <h3>💧 Irrigation Controller <span class="module-tag">MODULE 2</span></h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Smart irrigation planning based on weather & crop needs
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getIrrigationPlan</code></td>
+                    <td><span class="route-code">/api/irrigation/plan/:cropCycleId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get AI-generated irrigation schedule</td>
+                    <td>Module 2 - Water-efficient irrigation planning</td>
+                </tr>
+                <tr>
+                    <td><code>updateIrrigationPlan</code></td>
+                    <td><span class="route-code">/api/irrigation/plan/:cropCycleId</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Adjust irrigation based on weather changes</td>
+                    <td>Dynamic planning - skip irrigation if rain expected</td>
+                </tr>
+                <tr>
+                    <td><code>getWaterRequirement</code></td>
+                    <td><span class="route-code">/api/irrigation/water-need/:cropCycleId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Calculate crop's daily water needs</td>
+                    <td>Scientific water management</td>
+                </tr>
+                <tr>
+                    <td><code>getIrrigationMethods</code></td>
+                    <td><span class="route-code">/api/irrigation/methods</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get recommended irrigation techniques</td>
+                    <td>Drip/sprinkler/flood irrigation guidance</td>
+                </tr>
+                <tr>
+                    <td><code>trackWaterUsage</code></td>
+                    <td><span class="route-code">/api/irrigation/usage/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Monitor total water consumption</td>
+                    <td>Water conservation and cost tracking</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section page-break" id="market">
+        <h3>📈 Market Intelligence Controller <span class="module-tag">MODULE 3</span></h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Market intelligence and selling recommendations
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getMarketRecommendations</code></td>
+                    <td><span class="route-code">/api/market/recommendations/:cropCycleId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get AI selling recommendations</td>
+                    <td>Module 3 - Optimal selling strategy</td>
+                </tr>
+                <tr>
+                    <td><code>getNearbyMarkets</code></td>
+                    <td><span class="route-code">/api/market/nearby</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Find markets within specified radius</td>
+                    <td>Show farmers best places to sell</td>
+                </tr>
+                <tr>
+                    <td><code>getMarketAnalysis</code></td>
+                    <td><span class="route-code">/api/market/analysis/:cropId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get supply/demand analysis for crop</td>
+                    <td>Market intelligence for better decisions</td>
+                </tr>
+                <tr>
+                    <td><code>selectMarketRecommendation</code></td>
+                    <td><span class="route-code">/api/market/recommendations/:recId/select</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Choose a market recommendation</td>
+                    <td>Farmer commits to selling strategy</td>
+                </tr>
+                <tr>
+                    <td><code>recordSaleResult</code></td>
+                    <td><span class="route-code">/api/market/sale-result</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Record actual selling outcome</td>
+                    <td>Track recommendation accuracy</td>
+                </tr>
+                <tr>
+                    <td><code>getMarketTrends</code></td>
+                    <td><span class="route-code">/api/market/trends/:cropId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get historical market trends</td>
+                    <td>Educational market data for farmers</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="price">
+        <h3>💰 Price Analytics Controller <span class="module-tag">MODULE 3</span></h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Real-time price data and forecasting
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getCurrentPrices</code></td>
+                    <td><span class="route-code">/api/prices/current</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get today's market prices for crops</td>
+                    <td>Real-time price information</td>
+                </tr>
+                <tr>
+                    <td><code>getPriceForecast</code></td>
+                    <td><span class="route-code">/api/prices/forecast/:cropId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get LSTM price predictions</td>
+                    <td>Module 3 - Future price trends</td>
+                </tr>
+                <tr>
+                    <td><code>getPriceHistory</code></td>
+                    <td><span class="route-code">/api/prices/history/:cropId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get historical price data</td>
+                    <td>Price trend analysis</td>
+                </tr>
+                <tr>
+                    <td><code>comparePrices</code></td>
+                    <td><span class="route-code">/api/prices/compare</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Compare prices across different markets</td>
+                    <td>Help farmers find best selling location</td>
+                </tr>
+                <tr>
+                    <td><code>getPriceAlerts</code></td>
+                    <td><span class="route-code">/api/prices/alerts</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get price alert notifications</td>
+                    <td>Notify when target price is reached</td>
+                </tr>
+                <tr>
+                    <td><code>setPriceAlert</code></td>
+                    <td><span class="route-code">/api/prices/alerts</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Set price alert for specific crop</td>
+                    <td>Automated price monitoring</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="weather">
+        <h3>🌦️ Weather Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Weather data integration for crop planning
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getCurrentWeather</code></td>
+                    <td><span class="route-code">/api/weather/current</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get current weather for location</td>
+                    <td>Real-time weather for daily decisions</td>
+                </tr>
+                <tr>
+                    <td><code>getWeatherForecast</code></td>
+                    <td><span class="route-code">/api/weather/forecast</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get 7-15 day weather forecast</td>
+                    <td>Plan irrigation and activities</td>
+                </tr>
+                <tr>
+                    <td><code>getWeatherHistory</code></td>
+                    <td><span class="route-code">/api/weather/history</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get historical weather data</td>
+                    <td>Analyze weather patterns for planning</td>
+                </tr>
+                <tr>
+                    <td><code>getWeatherAlerts</code></td>
+                    <td><span class="route-code">/api/weather/alerts/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get severe weather warnings</td>
+                    <td>Protect crops from storms/extreme weather</td>
+                </tr>
+                <tr>
+                    <td><code>getFarmWeather</code></td>
+                    <td><span class="route-code">/api/weather/farm/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get location-specific weather for farm</td>
+                    <td>Precise weather data for farm coordinates</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="voice">
+        <h3>🎤 Voice Assistant Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Global voice assistant for farmer interaction
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>processVoiceQuery</code></td>
+                    <td><span class="route-code">/api/voice/query</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Process voice input and return response</td>
+                    <td>Voice interface for illiterate farmers</td>
+                </tr>
+                <tr>
+                    <td><code>textToSpeech</code></td>
+                    <td><span class="route-code">/api/voice/tts</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Convert text response to audio</td>
+                    <td>Audio responses in local language</td>
+                </tr>
+                <tr>
+                    <td><code>getVoiceHistory</code></td>
+                    <td><span class="route-code">/api/voice/history</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get previous voice interactions</td>
+                    <td>Track voice assistant usage</td>
+                </tr>
+                <tr>
+                    <td><code>updateVoiceSettings</code></td>
+                    <td><span class="route-code">/api/voice/settings</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Update language and voice preferences</td>
+                    <td>Customize voice experience</td>
+                </tr>
+                <tr>
+                    <td><code>voiceCommandHelp</code></td>
+                    <td><span class="route-code">/api/voice/help</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get list of supported voice commands</td>
+                    <td>Guide farmers on voice capabilities</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="notification">
+        <h3>🔔 Notification Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Push notification system for farmer alerts
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getNotifications</code></td>
+                    <td><span class="route-code">/api/notifications</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get farmer's notifications</td>
+                    <td>Display all alerts and reminders</td>
+                </tr>
+                <tr>
+                    <td><code>markNotificationRead</code></td>
+                    <td><span class="route-code">/api/notifications/:notificationId/read</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Mark notification as read</td>
+                    <td>Manage notification status</td>
+                </tr>
+                <tr>
+                    <td><code>getUnreadCount</code></td>
+                    <td><span class="route-code">/api/notifications/unread-count</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get count of unread notifications</td>
+                    <td>Show notification badge count</td>
+                </tr>
+                <tr>
+                    <td><code>updateNotificationSettings</code></td>
+                    <td><span class="route-code">/api/notifications/settings</span></td>
+                    <td><span class="method PUT">PUT</span></td>
+                    <td>Update notification preferences</td>
+                    <td>Control which alerts farmer receives</td>
+                </tr>
+                <tr>
+                    <td><code>sendTestNotification</code></td>
+                    <td><span class="route-code">/api/notifications/test</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Send test notification (dev only)</td>
+                    <td>Development and testing tool</td>
+                </tr>
+                <tr>
+                    <td><code>clearAllNotifications</code></td>
+                    <td><span class="route-code">/api/notifications/clear</span></td>
+                    <td><span class="method DELETE">DELETE</span></td>
+                    <td>Clear all notifications</td>
+                    <td>Clean up notification list</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controller-section" id="analytics">
+        <h3>📊 Analytics Controller</h3>
+        <div class="purpose">
+            <strong>Purpose:</strong> Farm performance analytics and insights
+        </div>
+        <table class="route-table">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Route</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Why Needed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>getFarmAnalytics</code></td>
+                    <td><span class="route-code">/api/analytics/farm/:farmId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get comprehensive farm performance data</td>
+                    <td>Show farmer their farming success metrics</td>
+                </tr>
+                <tr>
+                    <td><code>getCropPerformance</code></td>
+                    <td><span class="route-code">/api/analytics/crop-performance</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Compare crop yields and profits</td>
+                    <td>Help farmers choose profitable crops</td>
+                </tr>
+                <tr>
+                    <td><code>getFinancialSummary</code></td>
+                    <td><span class="route-code">/api/analytics/financial</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Get income/expense analysis</td>
+                    <td>Track farming profitability</td>
+                </tr>
+                <tr>
+                    <td><code>getSeasonalTrends</code></td>
+                    <td><span class="route-code">/api/analytics/seasonal-trends</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Analyze seasonal farming patterns</td>
+                    <td>Plan future seasons based on trends</td>
+                </tr>
+                <tr>
+                    <td><code>generateReport</code></td>
+                    <td><span class="route-code">/api/analytics/report</span></td>
+                    <td><span class="method POST">POST</span></td>
+                    <td>Generate detailed farming report</td>
+                    <td>PDF reports for farmers/banks/government</td>
+                </tr>
+                <tr>
+                    <td><code>getYieldPrediction</code></td>
+                    <td><span class="route-code">/api/analytics/yield-prediction/:cropCycleId</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Predict expected crop yield</td>
+                    <td>Help farmers plan harvest and sales</td>
+                </tr>
+                <tr>
+                    <td><code>getBenchmarking</code></td>
+                    <td><span class="route-code">/api/analytics/benchmarking</span></td>
+                    <td><span class="method GET">GET</span></td>
+                    <td>Compare with other farmers in region</td>
+                    <td>Show relative performance</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="integration-flow page-break" id="integration">
+        <h2>🔄 Integration Flow Between Controllers</h2>
+        
+        <h3>Complete End-to-End Flow:</h3>
+        
+        <div class="flow-step">
+            <strong>1. Farmer Onboards:</strong> authController → userController → farmController
+        </div>
+        
+        <div class="flow-step">
+            <strong>2. AI Assistant Takes Over:</strong> assistantController → recommendationController → cropCycleController
+        </div>
+        
+        <div class="flow-step">
+            <strong>3. Module 1 (Disease Detection):</strong> diseaseController ↔ forecastController → Updates cropCycleController
+        </div>
+        
+        <div class="flow-step">
+            <strong>4. Module 2 (Smart Planning):</strong> fertilizerController + irrigationController → Updates cropCycleController
+        </div>
+        
+        <div class="flow-step">
+            <strong>5. Module 3 (Market Intelligence):</strong> marketController + priceController → Final profit optimization
+        </div>
+        
+        <div class="flow-step">
+            <strong>6. Support Systems:</strong> weatherController, voiceController, notificationController, analyticsController
+        </div>
+    </div>
+
+    <div class="benefits">
+        <h3>🎯 Why This Architecture Works</h3>
+        <ul>
+            <li><strong>Modular Design:</strong> Each controller handles specific domain (disease, market, etc.)</li>
+            <li><strong>Separation of Concerns:</strong> Controllers handle HTTP, services handle business logic</li>
+            <li><strong>Scalability:</strong> Easy to add new modules or features</li>
+            <li><strong>AI Integration Points:</strong> Clear places where AI/ML models integrate</li>
+            <li><strong>Real-world Farming Flow:</strong> Mirrors actual farming process from planning to selling</li>
+            <li><strong>Multi-language Support:</strong> Voice and notification controllers support Telugu/Hindi/English</li>
+            <li><strong>Mobile-First:</strong> All endpoints designed for React Native app consumption</li>
+            <li><strong>Data-Driven Decisions:</strong> Analytics provide insights for continuous improvement</li>
+            <li><strong>Farmer-Friendly:</strong> Voice interface accommodates illiterate farmers</li>
+            <li><strong>Comprehensive Coverage:</strong> From soil testing to market sales - complete farming lifecycle</li>
+            <li><strong>Predictive Capabilities:</strong> Disease forecasting and price predictions</li>
+            <li><strong>Cost Management:</strong> Track expenses and optimize profitability</li>
+            <li><strong>Environmental Adaptation:</strong> Weather-based dynamic planning</li>
+            <li><strong>Educational Component:</strong> Teaches best practices through recommendations</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p><strong>AgriAssist Backend Documentation</strong></p>
+        <p>Generated on: <span id="current-date"></span></p>
+        <p><em>This structure ensures that the three main modules (Disease Detection, Smart Planning, Market Intelligence) work together seamlessly while providing a complete farming assistant experience for Indian farmers.</em></p>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // PDF Download functionality
+        function downloadPDF() {
+            // Hide download button for PDF
+            const downloadBtn = document.querySelector('.download-btn');
+            downloadBtn.style.display = 'none';
+            
+            // Trigger browser print dialog
+            window.print();
+            
+            // Show download button again after print dialog
+            setTimeout(() => {
+                downloadBtn.style.display = 'block';
+            }, 1000);
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
