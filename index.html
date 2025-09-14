@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -265,10 +269,483 @@
     </style>
 </head>
 <body>
-    <button class="download-btn no-print" onclick="downloadPDF()">📄 Download PDF</button>
     
     <div class="header">
-        <h1>🌾 AgriAssist Backend Documentation</h1>
+        <h1>🌾 AgriAssist Schemas Documentation</h1>
+
+    </div>
+    
+    <div class="controller-section page-break" id="database">
+        <h2>🗄️ Database Schemas</h2>
+        
+        <div class="controller-section" id="user-schema">
+            <h3>👤 User Schema (Farmers)</h3>
+            <div class="purpose">
+                <strong>Purpose:</strong> Store farmer profile information, preferences, and authentication data
+            </div>
+            <pre><code class="schema-code">const userSchema = new mongoose.Schema({
+  phoneNumber: {
+    type: String,
+    required: true,
+    unique: true,
+    match: /^[6-9]\d{9}$/
+  },
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  language: {
+    type: String,
+    enum: ['Telugu', 'Hindi', 'English'],
+    default: 'Telugu'
+  },
+  location: {
+    state: String,
+    district: String,
+    mandal: String,
+    village: String,
+    coordinates: {
+      latitude: Number,
+      longitude: Number
+    }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  farmProfiles: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farm'
+  }],
+  preferences: {
+    notifications: {
+      disease: { type: Boolean, default: true },
+      fertilizer: { type: Boolean, default: true },
+      irrigation: { type: Boolean, default: true },
+      market: { type: Boolean, default: true }
+    },
+    units: {
+      area: { type: String, enum: ['acre', 'hectare'], default: 'acre' },
+      weight: { type: String, enum: ['kg', 'quintal'], default: 'quintal' }
+    }
+  }
+}, {
+  timestamps: true
+});</code></pre>
+        </div>
+
+        <div class="controller-section" id="farm-schema">
+            <h3>🚜 Farm Schema</h3>
+            <div class="purpose">
+                <strong>Purpose:</strong> Store farm land details, soil reports, and water source information
+            </div>
+            <pre><code class="schema-code">const farmSchema = new mongoose.Schema({
+  farmer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  farmName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  totalArea: {
+    value: { type: Number, required: true },
+    unit: { type: String, enum: ['acre', 'hectare'], default: 'acre' }
+  },
+  location: {
+    coordinates: {
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true }
+    },
+    address: String
+  },
+  soilReport: {
+    testDate: Date,
+    ph: Number,
+    nitrogen: Number,
+    phosphorus: Number,
+    potassium: Number,
+    organicCarbon: Number,
+    micronutrients: {
+      zinc: Number,
+      iron: Number,
+      manganese: Number,
+      copper: Number,
+      boron: Number
+    },
+    reportUrl: String,
+    labName: String
+  },
+  waterSource: {
+    type: { type: String, enum: ['Borewell', 'Canal', 'River', 'Pond', 'Rainwater'] },
+    quality: { type: String, enum: ['Good', 'Average', 'Poor'] },
+    availability: { type: String, enum: ['Abundant', 'Moderate', 'Scarce'] },
+    reportUrl: String
+  },
+  activeCrops: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CropCycle'
+  }]
+}, {
+  timestamps: true
+});</code></pre>
+        </div>
+
+        <div class="controller-section" id="cropcycle-schema">
+            <h3>🌱 Crop Cycle Schema (End-to-End Assistant)</h3>
+            <div class="purpose">
+                <strong>Purpose:</strong> Manage complete crop lifecycle with AI recommendations and tracking
+            </div>
+            <pre><code class="schema-code">const cropCycleSchema = new mongoose.Schema({
+  farm: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farm',
+    required: true
+  },
+  farmer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  crop: {
+    name: { type: String, required: true },
+    variety: String,
+    category: { type: String, enum: ['Cereal', 'Pulse', 'Oilseed', 'Vegetable', 'Fruit', 'Cash Crop'] }
+  },
+  plantingArea: {
+    value: Number,
+    unit: { type: String, enum: ['acre', 'hectare'], default: 'acre' }
+  },
+  season: {
+    type: String,
+    enum: ['Kharif', 'Rabi', 'Zaid'],
+    required: true
+  },
+  cropStage: {
+    type: String,
+    enum: ['Planning', 'Sowing', 'Germination', 'Vegetative', 'Flowering', 'Fruiting', 'Maturity', 'Harvested'],
+    default: 'Planning'
+  },
+  timeline: {
+    sowingDate: Date,
+    expectedHarvestDate: Date,
+    actualHarvestDate: Date,
+    duration: Number
+  },
+  aiRecommendations: {
+    initialPlan: {
+      fertilizerSchedule: [{
+        date: Date,
+        type: String,
+        quantity: Number,
+        unit: String,
+        applied: { type: Boolean, default: false }
+      }],
+      irrigationSchedule: [{
+        date: Date,
+        duration: Number,
+        method: String,
+        applied: { type: Boolean, default: false }
+      }]
+    }
+  },
+  expenses: {
+    seeds: Number,
+    fertilizers: Number,
+    pesticides: Number,
+    irrigation: Number,
+    labor: Number,
+    other: Number,
+    total: Number
+  },
+  yield: {
+    expected: Number,
+    actual: Number,
+    unit: String,
+    quality: String
+  },
+  status: {
+    type: String,
+    enum: ['Active', 'Completed', 'Failed'],
+    default: 'Active'
+  }
+}, {
+  timestamps: true
+});</code></pre>
+        </div>
+
+        <div class="controller-section" id="disease-schema">
+            <h3>🦠 Disease Detection Schema <span class="module-tag">MODULE 1</span></h3>
+            <div class="purpose">
+                <strong>Purpose:</strong> Store AI disease detection results and treatment recommendations
+            </div>
+            <pre><code class="schema-code">const diseaseDetectionSchema = new mongoose.Schema({
+  farmer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  cropCycle: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CropCycle'
+  },
+  imageUrl: {
+    type: String,
+    required: true
+  },
+  imageMetadata: {
+    uploadDate: { type: Date, default: Date.now },
+    fileSize: Number,
+    dimensions: {
+      width: Number,
+      height: Number
+    },
+    location: {
+      latitude: Number,
+      longitude: Number
+    }
+  },
+  aiAnalysis: {
+    detectedDisease: {
+      name: String,
+      scientificName: String,
+      confidence: Number,
+      severity: { type: String, enum: ['Low', 'Medium', 'High'] }
+    },
+    alternativeDiagnoses: [{
+      name: String,
+      confidence: Number
+    }],
+    processingTime: Number,
+    modelVersion: String
+  },
+  recommendations: {
+    treatment: [{
+      method: String,
+      product: String,
+      dosage: String,
+      applicationMethod: String,
+      timingInstructions: String,
+      precautions: [String]
+    }],
+    preventiveMeasures: [String],
+    followUpDays: Number
+  },
+  followUp: {
+    status: { type: String, enum: ['Pending', 'Improved', 'Same', 'Worse'], default: 'Pending' },
+    nextCheckDate: Date,
+    farmerFeedback: String
+  }
+}, {
+  timestamps: true
+});</code></pre>
+        </div>
+
+        <div class="controller-section" id="market-schema">
+            <h3>💰 Market Price Schema <span class="module-tag">MODULE 3</span></h3>
+            <div class="purpose">
+                <strong>Purpose:</strong> Store real-time market prices and price forecasts
+            </div>
+            <pre><code class="schema-code">const marketPriceSchema = new mongoose.Schema({
+  crop: {
+    name: String,
+    variety: String,
+    grade: String
+  },
+  market: {
+    name: String,
+    district: String,
+    state: String,
+    type: { type: String, enum: ['Mandi', 'Wholesale', 'Retail', 'Direct'] }
+  },
+  priceData: {
+    date: Date,
+    minPrice: Number,
+    maxPrice: Number,
+    avgPrice: Number,
+    modalPrice: Number,
+    unit: String,
+    arrivals: Number,
+    currency: { type: String, default: 'INR' }
+  },
+  priceHistory: [{
+    date: Date,
+    price: Number,
+    arrivals: Number
+  }],
+  priceForecast: [{
+    date: Date,
+    predictedPrice: Number,
+    confidence: Number,
+    factors: [String]
+  }],
+  source: String,
+  lastUpdated: {
+    type: Date,
+    default: Date.now
+  }
+}, {
+  timestamps: true
+});</code></pre>
+        </div>
+
+        <div class="controller-section" id="notification-schema">
+            <h3>🔔 Notification Schema</h3>
+            <div class="purpose">
+                <strong>Purpose:</strong> Manage push notifications and alerts for farmers
+            </div>
+            <pre><code class="schema-code">const notificationSchema = new mongoose.Schema({
+  farmer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  type: {
+    type: String,
+    enum: ['Disease_Alert', 'Fertilizer_Reminder', 'Irrigation_Reminder', 'Market_Alert', 'Weather_Warning', 'General'],
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  },
+  language: {
+    type: String,
+    enum: ['Telugu', 'Hindi', 'English'],
+    required: true
+  },
+  priority: {
+    type: String,
+    enum: ['Low', 'Medium', 'High', 'Critical'],
+    default: 'Medium'
+  },
+  data: {
+    cropCycle: { type: mongoose.Schema.Types.ObjectId, ref: 'CropCycle' },
+    diseaseDetection: { type: mongoose.Schema.Types.ObjectId, ref: 'DiseaseDetection' },
+    marketRecommendation: { type: mongoose.Schema.Types.ObjectId, ref: 'MarketRecommendation' },
+    actionRequired: Boolean,
+    actionUrl: String
+  },
+  status: {
+    type: String,
+    enum: ['Sent', 'Delivered', 'Read', 'Acted'],
+    default: 'Sent'
+  },
+  sentAt: {
+    type: Date,
+    default: Date.now
+  },
+  readAt: Date,
+  expiresAt: Date
+}, {
+  timestamps: true
+});</code></pre>
+        </div>
+    </div>
+
+
+
+    <div class="controller-section page-break" id="caching">
+        <h2>⚡ Caching Strategy</h2>
+        
+        <div class="controller-section">
+            <h3>📦 Redis Cache Structure</h3>
+            <div class="purpose">
+                <strong>Purpose:</strong> Optimize performance with intelligent caching layers
+            </div>
+            
+            <table class="route-table">
+                <thead>
+                    <tr>
+                        <th>Cache Type</th>
+                        <th>Key Pattern</th>
+                        <th>TTL</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Authentication</strong></td>
+                        <td><code>otp:{phoneNumber}</code></td>
+                        <td>5 minutes</td>
+                        <td>OTP verification</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Weather Data</strong></td>
+                        <td><code>weather:current:{lat}:{lon}</code></td>
+                        <td>30 minutes</td>
+                        <td>Current weather conditions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI Recommendations</strong></td>
+                        <td><code>crop_rec:{farmId}:{season}</code></td>
+                        <td>24 hours</td>
+                        <td>Crop recommendations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Market Prices</strong></td>
+                        <td><code>market_prices:{crop}:{district}</code></td>
+                        <td>1 hour</td>
+                        <td>Real-time market prices</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Disease Forecast</strong></td>
+                        <td><code>disease_forecast:{farmId}</code></td>
+                        <td>12 hours</td>
+                        <td>Disease outbreak predictions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>User Data</strong></td>
+                        <td><code>user:{userId}</code></td>
+                        <td>1 hour</td>
+                        <td>User profile caching</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI Chat Session</strong></td>
+                        <td><code>ai_chat:{userId}:{sessionId}</code></td>
+                        <td>30 minutes</td>
+                        <td>Conversation context</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Cache Implementation Pattern</h4>
+            <pre><code class="schema-code">class CacheHelper {
+  // Get cached data with fallback
+  static async getOrSet(key, fallbackFunction, ttl) {
+    let data = await this.get(key);
+    
+    if (!data) {
+      data = await fallbackFunction();
+      if (data) {
+        await this.set(key, data, ttl);
+      }
+    }
+    
+    return data;
+  }
+  
+  // Cache invalidation patterns
+  static async invalidateUserCache(userId) {
+    await this.delPattern(`user:${userId}*`);
+    await this.delPattern(`crop_rec:*:${userId}`);
+    await this.delPattern(`ai_chat:${userId}:*`);
+  }
+}</code></pre>
+        </div>
+    </div>
+
+<td>
+
+    <div class="header">
+        <h1>🌾 AgriAssist Routes Documentation</h1>
         <p>Complete Controllers & Routes Architecture</p>
         <p><em>AI-Powered Farming Assistant for Indian Farmers</em></p>
     </div>
